@@ -1,0 +1,45 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import plotly.express as px
+
+# Load dataset
+df = pd.read_csv("studentsperformance.csv")
+
+# Basic info
+print(df.info())
+print(df.describe())
+
+# Histogram
+plt.figure(figsize=(10, 6))
+sns.histplot(df['math score'], kde=True, color="blue", label="Math", stat="density", element="step")
+sns.histplot(df['reading score'], kde=True, color="green", label="Reading", stat="density", element="step")
+sns.histplot(df['writing score'], kde=True, color="red", label="Writing", stat="density", element="step")
+plt.title("Score Distributions")
+plt.xlabel("Score")
+plt.ylabel("Density")
+plt.legend()
+plt.tight_layout()
+plt.show()
+# Melt the DataFrame into long format
+df_melted = df.melt(value_vars=['math score', 'reading score', 'writing score'],
+                    var_name='Subject', value_name='Score')
+
+# Boxplot
+plt.figure(figsize=(10, 6))
+sns.boxplot(x='Subject', y='Score', data=df_melted, palette='Set2')
+plt.title("Boxplot of Scores by Subject")
+plt.tight_layout()
+plt.show()
+
+
+# Correlation
+# Select only numeric columns
+numeric_df = df[['math score', 'reading score', 'writing score']]
+sns.heatmap(numeric_df.corr(), annot=True, cmap="coolwarm")
+plt.title("Correlation Matrix")
+plt.show()
+
+# Interactive plot
+fig = px.scatter(df, x='reading score', y='writing score', color='gender')
+fig.show()
